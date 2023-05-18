@@ -1,10 +1,7 @@
 import csv
+
 project_name = "Ck Palmer Expense Tracker"
-
-
 underline = "================================="
-
-
 
 def display_menu():
     print("========== Welcome to Ck Expense Tracker ==========")
@@ -15,63 +12,113 @@ def display_menu():
     print("5. View expense summary")
     print("6. Exit Application")
     print("0. ========= Exit Application ===========")
-    # ...
 
 def add_expense(file):
-  # collect expense details from the user
-  title = input("what should I call this expense? ==>")
-  date = input("Enter date (DD-MM-YYY): ")
-  description = input("Enter specification: ")
-  amount = input("Enter amount: what is the amount in Ghc")
+    # collect expense details from the user
+    title = input("What should I call this expense? ==> ")
+    date = input("Enter date (DD-MM-YYYY): ")
+    description = input("Enter specification: ")
+    amount = input("Enter amount in Ghc: ")
 
-  print("Title:\t", title)
-  print("Date:\t", date)
-  print("description:\t", description)
+    print("Title:\t", title)
+    print("Date:\t", date)
+    print("Description:\t", description)
 
-  yes_or_no = input("confirm you want to add this expense: yes(y)/no(n) ==>")
+    yes_or_no = input("Confirm you want to add this expense (yes/no): ")
 
-  if yes_or_no == "yes" or "YES" or "y" or "Y":
-    print("persisting to db...")
-    # add to the csv file 
+    if yes_or_no.lower() in ["yes", "y"]:
+        print("Persisting to database...")
+        writer = csv.writer(file)
+        writer.writerow([title, date, description, amount])
+        print("Expense recorded successfully!")
+    else:
+        print("Aborted...")
 
-    with open('expense.csv', mode='a', newline='') as expense_file:
-        expenses_writer = csv.writer(expense_file, delimiter=',')
-        expenses_writer.writerow([date, description, amount])
-
-    print("Expense recorded successfully!")
-
-    #  writer = csv.writer(file)
-    #  writer.writerow([title, amount, description])
-    #  print("Added to db")
-    #  print(underline)
-  else:
-    print("Aborted...")
- 
- 
-  
 def view_expenses():
-   # read expense deatail from the CSV file
-   with open('expenses.txt', mode='r') as expenses_file:
-      expenses_reader = csv.reader(expenses_file)
-      expenses_reader = list(expenses_reader)
+    with open('expenses.csv', mode='r') as file:
+        reader = csv.reader(file)
+        expenses = list(reader)
 
+    if len(expenses) == 0:
+        print("No expenses found")
+    else:
+        print("Expenses:")
+        for expense in expenses:
+            print(f"Title: {expense[0]}, Date: {expense[1]}, Description: {expense[2]}, Amount: {expense[3]}")
 
-    # Show expense details to user"
-   if len(expenses_list) == 0:
-         print("No expenses found")
-   else: 
-       for expense in expenses_list: 
-           print(f"Date: {expense[0]}, Description: {expense[1]}, Amount: {expense[2]}")
+def update_expenses(file):
+    expense_id = input("Enter the expense ID to update: ")
 
+    with open('expenses.csv', mode='r') as file:
+        reader = csv.reader(file)
+        expenses_list = list(reader)
 
-def update_expenses():
-    # Ask expense ID from user
+    found = False
+    for i, expense in enumerate(expenses_list):
+        if expense[0] == expense_id:
+            found = True
+            new_date = input("Enter new date (DD-MM-YYYY): ")
+            new_description = input("Enter new description: ")
+            new_amount = input("Enter new amount in Ghc: ")
 
-    expense_id = input("Enter expense ID to update: ")
-    new_date = input("Enter new date (DD-MM-YYY): ")
-    new_desc = input("Enter new description: ")
-    new_amount = input("Enter new amount: ")
-    
+            yes_or_no = input("Confirm you want to update this expense (yes/no): ")
+
+            if yes_or_no.lower() in ["yes", "y"]:
+                expenses_list[i] = [expense_id, new_date, new_description, new_amount]
+                print("Expense updated successfully!")
+            else:
+                print("Aborted...")
+            break
+
+    if not found:
+        print("Expense not found")
+
+    with open('expenses.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(expenses_list)
+
+def delete_expense():
+    expense_id = input("Enter expense ID to delete: ")
+
+    with open('expenses.csv', mode='r') as file:
+        reader = csv.reader(file)
+        expenses = list(reader)
+
+    found = False
+    for i, expense in enumerate(expenses):
+        if expense[0] == expense_id:
+            found = True
+            del expenses[i]
+            print("Expense deleted successfully!")
+            break
+
+    if not found:
+        print("Expense not found")
+
+    with open('expenses.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(expenses)
+
+def view_expense_summary():
+    with open('expenses.csv', mode='r') as file:
+        reader = csv.reader(file)
+        expenses = list(reader)
+
+    if len(expenses) == 0:
+        print("No expenses found")
+    else:
+        total_expenses = 0
+        print("Expense Summary:")
+        for expense in expenses:
+            title, date, description, amount = expense
+            amount = float(amount)
+            total_expenses += amount
+            print(f"Title: {title}, Amount: {amount}")
+
+        print("Total Expenses:", total_expenses)
+
+def exit_application():
+    print("Exiting the application...")
 
 def main():
     print(underline)
@@ -80,18 +127,31 @@ def main():
     display_menu()
     print(underline)
     
-    # check if file exits,
-    # if file exits --> open in write mode
-    # else open in append mode
-    file = open("expense.csv", "w")
+    file = open("expenses.csv", "a", newline='')
 
-    choice = -1 
+    choice = -1
     while choice != 0:
-       choice =int(input("what do you want to do: "))
-       print("You want to do choice:", choice)
-       # conditions ===> if,   elif, else 
-       if choice == 1:
-          add_expense(file)
+        choice = int(input("What do you want to do: "))
+        print("You chose:", choice)
+        
+        if choice == 1:
+            add_expense(file)
+        elif choice == 2:
+            view_expenses()
+        elif choice == 3:
+            update_expenses(file)
+        elif choice == 4:
+            delete_expense()
+        elif choice == 5:
+            view_expense_summary()
+        elif choice == 6:
+            exit_application()
+        elif choice == 0:
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+    file.close()
 
 if __name__ == "__main__":
-   main()
+    main()
