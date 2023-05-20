@@ -11,14 +11,14 @@ def display_menu():
     print("4. Delete an expense")
     print("5. View expense summary")
     print("6. Exit Application")
-    print("0. ========= Exit Application ===========")
+  
 
 def add_expense(file):
     # collect expense details from the user
     title = input("What should I call this expense? ==> ")
     date = input("Enter date (DD-MM-YYYY): ")
     description = input("Enter specification: ")
-    amount = input("Enter amount in Ghc: ")
+    amount = input("Enter amount in Ghs: ")
 
     print("Title:\t", title)
     print("Date:\t", date)
@@ -44,9 +44,9 @@ def view_expenses():
     else:
         print("Expenses:")
         for expense in expenses:
-            print(f"Title: {expense[0]}, Date: {expense[1]}, Description: {expense[2]}, Amount: {expense[3]}")
+            print(f"Title: {expense[0]}, Date: {expense[1]}, Description: {expense[2]}, Amount: GHS {expense[3]}")
 
-def update_expenses(file):
+def update_expenses(expenses_file):
     expense_id = input("Enter the expense ID to update: ")
 
     with open('expenses.csv', mode='r') as file:
@@ -82,13 +82,13 @@ def delete_expense():
 
     with open('expenses.csv', mode='r') as file:
         reader = csv.reader(file)
-        expenses = list(reader)
+        expense = list(reader)
 
     found = False
-    for i, expense in enumerate(expenses):
+    for i, expense in enumerate(expense):
         if expense[0] == expense_id:
             found = True
-            del expenses[i]
+            del expense[i]
             print("Expense deleted successfully!")
             break
 
@@ -97,7 +97,7 @@ def delete_expense():
 
     with open('expenses.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerows(expenses)
+        writer.writerows(expense)
 
 def view_expense_summary():
     with open('expenses.csv', mode='r') as file:
@@ -129,29 +129,27 @@ def main():
     
     file = open("expenses.csv", "a", newline='')
 
-    choice = -1
-    while choice != 0:
-        choice = int(input("What do you want to do: "))
-        print("You chose:", choice)
+    range = -1
+    while range != 0:
+        range = int(input("What do you want to do: "))
+        print("Your option:", range)
         
-        if choice == 1:
+        if range == 1:
             add_expense(file)
-        elif choice == 2:
+        elif range == 2:
             view_expenses()
-        elif choice == 3:
+        elif range == 3:
             update_expenses(file)
-        elif choice == 4:
+        elif range == 4:
             delete_expense()
-        elif choice == 5:
+        elif range == 5:
             view_expense_summary()
-        elif choice == 6:
+        elif range == 6:
             exit_application()
-        elif choice == 0:
+        elif range == 0:
             break
         else:
             print("Invalid choice. Please try again.")
-
-    file.close()
 
 if __name__ == "__main__":
     main()
