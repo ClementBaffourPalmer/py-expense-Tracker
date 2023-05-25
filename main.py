@@ -14,34 +14,52 @@ def display_menu():
     print("5. View expense summary")
     print("6. Exit Application")
 
-
 def add_expense(file):
-    # collect expense details from the user
-    title = input("What should I call this expense? ==> ")
-    amount = input("What is the amount (Ghs)? ==>")
-    description = input("Enter some description (optional) ==>")
-
-    print("Title:\t", title)
-    print("Description:\t", description)
-    print("Adding Expenses")
-
-    data = [title, amount, description]
-    table_data = [["Title", "Amount", "Description"], data]
-    table = AsciiTable(table_data)
+    #Request for the details of each of the expenses
+    title = input("What should i call this expense? ==> ")
+    amount = float(input("What is the amount of expense (GHS)?: ==> "))
+    description = input("Enter some description (optional): ==> ")
+    date  = input("Enter date (DD-MM-YY): ==> ")
+    print(underline)
+    data = [description,amount,date]
+    table = AsciiTable([["Description","Amount(GHS)","Date"],data])
     print(table.table)
-    yes_or_no = input("Confirm you want to add this expense (yes/no): ")
-
-    if yes_or_no.lower() in ["yes", "y"]:
-        print("Persisting to database...")
-        # add to the csv file
-        writer = csv.writer(file)
-        writer.writerow(data)
-        print("Added to db")
-        print("Expense recorded successfully!")
-        print(table.table)
-        print(underline)
+    yes_or_no = input("Are you sure you want to add this expenses(Yes(y)/No(n)): ")
+    if yes_or_no in ["yes","Yes","y","Y","YES"]:
+        with open("expenses.csv", mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([description, amount, date])
+        print("Expenses recorded successfully.")
     else:
-        print("Aborted...")
+         print("Add expense Unsuccessful.")
+    print(underline)
+# def add_expense(file):
+#     # collect expense details from the user
+#     title = input("What should I call this expense? ==> ")
+#     amount = input("What is the amount (Ghs)? ==>")
+#     description = input("Enter some description (optional) ==>")
+
+#     print("Title:\t", title)
+#     print("Description:\t", description)
+#     print("Adding Expenses")
+
+#     data = [title, amount, description]
+#     table_data = [["Title", "Amount", "Description"], data]
+#     table = AsciiTable(table_data)
+#     print(table.table)
+#     yes_or_no = input("Confirm you want to add this expense (yes/no): ")
+
+#     if yes_or_no.lower() in ["yes", "y"]:
+#         print("Persisting to database...")
+#         # add to the csv file
+#         writer = csv.writer(file)
+#         writer.writerow(data)
+#         print("Added to db")
+#         print("Expense recorded successfully!")
+#         print(table.table)
+#         print(underline)
+#     else:
+#         print("Aborted...")
 
 
 def view_expenses(file):
